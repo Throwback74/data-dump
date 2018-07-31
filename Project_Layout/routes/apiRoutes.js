@@ -2,6 +2,8 @@
 var db = require("../models");
 var passport = require("../config/passport");
 
+var isAuthenticated = require("../config/middleware/isAuthenticated");
+
 module.exports = function(app) {
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
@@ -12,6 +14,10 @@ module.exports = function(app) {
     // They won't get this or even be able to access this page if they aren't authed
     res.json("/members");
   });
+// ALTERNATIVELY per the documentation we can do this (NEEDS TESTING):
+app.post('/login', passport.authenticate('local', { 
+  successRedirect: '/',                                               failureRedirect: '/login' 
+}));
 
   // Route for signing up a user. The user's password is automatically hashed and stored securely thanks to
   // how we configured our Sequelize User Model. If the user is created successfully, proceed to log the user in,
@@ -52,6 +58,43 @@ module.exports = function(app) {
     }
   });
 
+  app.post("/api/create_contact", function(req, res) {
+    if (!req.user) {
+      res.json("/members");
+    }
+    else {
+      console.log(req.body);
+      db.Phonebook.create({
+        contact_name: req.body.contact,
+        phone_number: req.body.phone_number,
+        notes: req.body.notes,
+        userID: req.user.id
+      }).then(function(dbPhonebook) {
+        res.json({
+          message: "Contact Created!",
+          data: dbPhonebook
+        });
+      }).catch(function(err) {
+        console.log(err);
+        res.json(err);
+        // res.status(422).json(err.errors[0].message);
+      });
+    }
+  });
+
+// TODO: Create Update contacts Api Put route, as well as a Get Route for a findAll where UserID = req.user.id; test current routes.
+  // POST route for saving a new post
+  // app.post("/api/posts", function(req, res) {
+  //   console.log(req.body);
+  //   db.Post.create({
+  //     title: req.body.title,
+  //     body: req.body.body,
+  //     category: req.body.category
+  //   })
+  //     .then(function(dbPost) {
+  //       res.json(dbPost);
+  //     });
+  // });
 };
 
 
