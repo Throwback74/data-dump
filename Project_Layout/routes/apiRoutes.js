@@ -58,7 +58,7 @@ app.post('/login', passport.authenticate('local', {
     }
   });
 
-  app.post("/api/create_contact", function(req, res) {
+  app.post("/api/contact/create", function(req, res) {
     if (!req.user) {
       res.json("/members");
     }
@@ -82,6 +82,60 @@ app.post('/login', passport.authenticate('local', {
     }
   });
 
+  // Get route for retrieving all contacts for a single user
+  app.get("/api/user/:contacts", function(req, res) {
+    db.Phonebook.findAll({
+      where: {
+        UserID: req.params.contacts
+      }
+    })
+      .then(function(dbPhonebook) {
+        res.json(dbPhonebook);
+      });
+  });
+
+  // Get route for retrieving a single Phonebook contact
+  app.get("/api/contact/:id", function(req, res) {
+    db.Phonebook.findOne({
+      where: {
+        id: req.params.id
+      }
+    })
+      .then(function(dbPhonebook) {
+        res.json(dbPhonebook);
+      });
+  });
+
+  // Add sequelize code to update the devoured value
+  app.put("/api/update/", function(req, res) {
+    db.Phonebook.update({ 
+      contact_name: req.body.contact,
+      phone_number: req.body.phone_number,
+      notes: req.body.notes
+    },
+      {
+      where: {
+        id: req.body.id
+      }
+  }).then(function(data) {
+    console.log(data);
+    res.redirect("/api/all");
+    });
+  });
+
+
+    // PUT route for updating posts
+    // app.put("/api/posts", function(req, res) {
+    //   db.Post.update(req.body,
+    //     {
+    //       where: {
+    //         id: req.body.id
+    //       }
+    //     })
+    //     .then(function(dbPost) {
+    //       res.json(dbPost);
+    //     });
+    // });
 // TODO: Create Update contacts Api Put route, as well as a Get Route for a findAll where UserID = req.user.id; test current routes.
   // POST route for saving a new post
   // app.post("/api/posts", function(req, res) {

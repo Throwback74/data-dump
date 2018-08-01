@@ -1,5 +1,5 @@
 // Requiring bcrypt for password hashing. Using the bcrypt-nodejs version as the regular bcrypt module
-// sometimes causes errors on Windows machines
+// sometimes causes errors on Windows machines our number= (714) 695-5738
 var bcrypt = require("bcrypt-nodejs");
 // Creating our User model
 module.exports = function(sequelize, DataTypes) {
@@ -17,6 +17,11 @@ module.exports = function(sequelize, DataTypes) {
     password: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    twilio_number: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 7146955738
     }
   });
   // Creating a custom method for our User model. This will check if an unhashed password entered by the user can be compared to the hashed password stored in our database
