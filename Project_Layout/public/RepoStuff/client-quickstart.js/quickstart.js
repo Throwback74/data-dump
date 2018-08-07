@@ -15,7 +15,7 @@ $(function () {
       Twilio.Device.setup(data.token);
 
       Twilio.Device.ready(function (device) {
-        log('Twilio.Device Ready!');
+        console.log('Twilio.Device Ready!');
         document.getElementById('call-controls').style.display = 'block';
       });
 
